@@ -1,3 +1,5 @@
+package com.iit.oop;
+
 public class Configuration {
     private int totalTickets;
     private int ticketReleaseRate;
