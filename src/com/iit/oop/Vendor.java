@@ -1,33 +1,30 @@
 package com.iit.oop;
 public class Vendor implements Runnable {
-    private final int vendorId; // Unique identifier for the vendor.
-    private final int ticketsPerRelease; // Number of tickets released each time.
-    private final int releaseInterval; // Time interval (in seconds) between releases.
+    private int vendorId;
+    private int ticketReleaseRate;
     private int totalTickets;
-    private final TicketPool ticketPool; // Shared pool where tickets are added.
+    private TicketPool ticketPool; // Shared pool
 
 
 
-    public Vendor(int vendorId, int ticketsPerRelease, int releaseInterval, TicketPool ticketPool, int totalTickets) {
+    public Vendor(int vendorId, int ticketReleaseRate , TicketPool ticketPool, int totalTickets) {
         this.vendorId = vendorId;
-        this.ticketsPerRelease = ticketsPerRelease;
-        this.releaseInterval = releaseInterval;
+        this.ticketReleaseRate = ticketReleaseRate;
         this.ticketPool = ticketPool;
         this.totalTickets = totalTickets;
-
     }
 
-    // Overriding the run() method to define vendor's behavior.
     @Override
     public void run() {
-        for (int i = 1; i <= totalTickets; i++) {
+        while (ticketPool.getTicketCount() <= totalTickets) { // Only keep running until all tickets are released
             ticketPool.addTickets();
             try {
-                Thread.sleep(releaseInterval * 1000); // To calculate to MS
+                Thread.sleep(ticketReleaseRate * 1000); // To simulate delay
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 }
+
 

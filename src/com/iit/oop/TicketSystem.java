@@ -3,8 +3,6 @@ import java.util.Scanner;
 
 
 public class TicketSystem {
-    private static boolean exit = false;
-
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
@@ -33,17 +31,17 @@ public class TicketSystem {
         TicketPool ticketPool = new TicketPool(paraValues.getMaxTicketCapacity(),paraValues.getTotalTickets());
         System.out.println("System configured successfully.");
 
-        int ticketsPerRelease = 5; // Number of tickets each vendor releases
-        int releaseInterval = 50;
+        //int ticketsPerRelease = 5; // Number of tickets each vendor releases
+        //int releaseInterval = 50;
         for(int vendorId=1;vendorId<=numVendors;vendorId++) {
-            Vendor vendor = new Vendor(vendorId, ticketsPerRelease, releaseInterval, ticketPool, paraValues.getTotalTickets());
+            Vendor vendor = new Vendor(vendorId,paraValues.getTicketReleaseRate(), ticketPool, paraValues.getTotalTickets());
             Thread vendorThread = new Thread(vendor, "Vendor ID- "+vendorId);
             vendorThread.start();
         }
 
-        int retrievalInterval=2;
+        //int retrievalInterval=2;
         for(int customerId=1;customerId<=numCustomers;customerId++) {
-            Customer customer = new Customer(customerId,retrievalInterval,ticketPool);
+            Customer customer = new Customer(customerId,paraValues.getCustomerRetrievalRate(),ticketPool);
             Thread customerThread = new Thread(customer, "Customer ID- "+customerId);
             customerThread.start();
         }
