@@ -9,8 +9,6 @@ public class TicketPool {
     private int ticketCount; // Ticket count to generate unique ticket IDs
     private int totalTickets;
 
-    //private int remainingTickets = paraValues.getTotalTickets;
-
     public TicketPool(int maximumCapacity,int totalTickets) {
         this.maximumCapacity = maximumCapacity;
         this.ticketQueue = new LinkedList<>();
@@ -28,13 +26,12 @@ public class TicketPool {
                 throw new RuntimeException(e.getMessage());
             }
         }
-        if(ticketCount<=totalTickets) {
-            // Generate unique ticket ID
+        while(ticketQueue.size() < maximumCapacity && ticketCount <= totalTickets) {
             String ticketId = "TicketID: " + ticketCount;
             ticketQueue.add(ticketId);
-            System.out.println(ticketId + " added by " + Thread.currentThread().getName() + ". Available tickets: " + ticketQueue.size());
-            ticketCount++; // Always increment for uniqueness
+            ticketCount++;
             notifyAll(); // Notify waiting threads
+            System.out.println(ticketId + " added by " + Thread.currentThread().getName() + ". Available tickets: " + ticketQueue.size());
         }
     }
 
@@ -47,10 +44,10 @@ public class TicketPool {
                 throw new RuntimeException(e.getMessage());
             }
         }
-
         String purchasedTicket = ticketQueue.poll();
-        System.out.println(purchasedTicket + " purchased by " + Thread.currentThread().getName() + " Remaining tickets: " + ticketQueue.size());
         notifyAll(); // Notify waiting threads
+        System.out.println(purchasedTicket + " purchased by " + Thread.currentThread().getName() + " Remaining tickets: " + ticketQueue.size());
+
     }
 }
 
