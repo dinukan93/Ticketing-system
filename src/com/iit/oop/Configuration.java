@@ -67,7 +67,8 @@ public class Configuration {
 
     public String toString() {
         return "Total Tickets: " + getTotalTickets() + ", Release Rate: " + getTicketReleaseRate() +
-                ", Retrieval Rate: " + getCustomerRetrievalRate() + ", Max Capacity: " + getMaxTicketCapacity();
+                ", Retrieval Rate: " + getCustomerRetrievalRate() + ", Max Capacity: " + getMaxTicketCapacity() +
+                ",Vendors: " + getNumVendors() + ", Customers: " + getNumCustomers();
     }
 }
 

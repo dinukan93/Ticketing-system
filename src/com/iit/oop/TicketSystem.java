@@ -1,5 +1,11 @@
 package com.iit.oop;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Scanner;
+
+import com.google.gson.Gson;
+import java.io.FileWriter;
+import java.io.IOException;
 
 
 public class TicketSystem {
@@ -7,6 +13,7 @@ public class TicketSystem {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        Configuration paraValues = null;
 
         System.out.println("Real-Time Event Ticketing System!");
         while (true) {
@@ -21,23 +28,29 @@ public class TicketSystem {
 
             switch (choice) {
                 case 1:
-                    startSystem(sc);
+                    paraValues = startSystem(sc);
                     sc.next();
                     break;
                 case 2:
-                    //
+                    if (paraValues != null) {
+                        saveFile(paraValues);
+                    } else {
+                        System.out.println("No configuration to save.");
+                    }
                     break;
+
                 case 3:
-                    //
+                    paraValues=loadFile();
                     break;
                 case 4:
-                    //exitSystem();
+                    exitSystem();
+                    return;
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
         }
     }
-    public static void startSystem(Scanner sc) {
+    public static Configuration startSystem(Scanner sc) {
         System.out.print("Enter total tickets: ");
         int totalTickets = sc.nextInt();
 
@@ -94,10 +107,47 @@ public class TicketSystem {
         System.out.println("Remaining Tickets in Pool: " + (ticketPool.getTotalTickets()-ticketPool.getTicketCount()));
         System.out.println("System stopped.");
 
+        return paraValues;
+
+
     }
     public static boolean isRunning() {
         return isRunning;
     }
+
+    public static void saveFile(Configuration paraValues) {
+        Gson gson = new Gson();
+        String json = gson.toJson(paraValues);
+
+        try (FileWriter writer = new FileWriter("userInput.json")) {
+            writer.write(json);
+            System.out.println("Object saved to userInput.json");
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+
+    }
+
+    public static Configuration loadFile() {
+        try (FileReader reader = new FileReader("userInput.json")) {
+            Gson gson = new Gson();
+            System.out.println("load from userInput.json successfully");
+            return gson.fromJson(reader, Configuration.class);
+        } catch (FileNotFoundException e) {
+            System.err.println("Error: The file 'userInput.json' was not found.");
+            return null;
+        } catch (IOException e) {
+            System.err.println("Error reading from file: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static void exitSystem() {
+        isRunning = false;
+        System.out.println("Exiting the system...");
+        System.exit(0);  // Exit the program
+    }
+
 }
 
 

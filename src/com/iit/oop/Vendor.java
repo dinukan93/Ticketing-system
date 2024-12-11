@@ -26,19 +26,6 @@ public class Vendor implements Runnable {
     }
 
 
-    //correct one
-    /*@Override
-    public void run() {
-        for (int i = 1; i < totalTickets; i++) {
-            ticketPool.addTicket();
-            try {
-                Thread.sleep(ticketReleaseRate * 1000); // To calculate to MS
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }*/
-
 }
 
 

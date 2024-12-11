@@ -23,23 +23,6 @@ public class Customer implements Runnable {
         }
     }
 
-
-
-
-
-
-    //correct
-    /*@Override
-    public void run() {
-        for (int i = 0; i < ticketPool.getTotalTickets() ; i++) {
-            ticketPool.removeTicket(); // Call method to buyTickets
-            try {
-                Thread.sleep(customerRetrievalRate * 800); // Retieving delay
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }*/
 }
 
 
