@@ -1,6 +1,7 @@
 package com.iit.oop;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
@@ -51,25 +52,95 @@ public class TicketSystem {
         }
     }
     public static Configuration startSystem(Scanner sc) {
-        System.out.print("Enter total tickets: ");
-        int totalTickets = sc.nextInt();
+        int totalTickets =0;
+        int releaseRate =0;
+        int retrievalRate =0;
+        int maxCapacity = 0;
+        int numVendors =0;
+        int numCustomers =0;
 
-        System.out.print("Enter ticket release rate (tickets per second): ");
-        int releaseRate = sc.nextInt();
+        while (totalTickets <= 0) {
+            System.out.print("Enter total tickets: ");
+            try {
+                totalTickets = sc.nextInt();
+                if (totalTickets <= 0) {
+                    System.out.println("Total tickets must be greater than 0.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid number.");
+                sc.next(); // Clear input
+            }
+        }
 
-        System.out.print("Enter customer retrieval rate (tickets per second): ");
-        int retrievalRate = sc.nextInt();
+        // Validate releaseRate input
+        while (releaseRate <= 0) {
+            System.out.print("Enter ticket release rate (tickets per second): ");
+            try {
+                releaseRate = sc.nextInt();
+                if (releaseRate <= 0) {
+                    System.out.println("Release rate must be greater than 0.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid number.");
+                sc.next(); // Clear the invalid input
+            }
+        }
 
-        System.out.print("Enter maximum ticket capacity: ");
-        int maxCapacity = sc.nextInt();
+        // Validate retrievalRate input
+        while (retrievalRate <= 0) {
+            System.out.print("Enter customer retrieval rate (tickets per second): ");
+            try {
+                retrievalRate = sc.nextInt();
+                if (retrievalRate <= 0) {
+                    System.out.println("Retrieval rate must be greater than 0.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid number.");
+                sc.next(); // Clear the invalid input
+            }
+        }
 
+        // Validate maxCapacity input
+        while (maxCapacity <= 0) {
+            System.out.print("Enter maximum ticket capacity: ");
+            try {
+                maxCapacity = sc.nextInt();
+                if (maxCapacity <= 0) {
+                    System.out.println("Maximum capacity must be greater than 0.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid number.");
+                sc.next(); // Clear the invalid input
+            }
+        }
 
-        System.out.print("Enter number of vendors: ");
-        int numVendors = sc.nextInt();
+        // Validate numVendors input
+        while (numVendors <= 0) {
+            System.out.print("Enter number of vendors: ");
+            try {
+                numVendors = sc.nextInt();
+                if (numVendors <= 0) {
+                    System.out.println("Number of vendors must be greater than 0.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid number.");
+                sc.next(); // Clear the invalid input
+            }
+        }
 
-        System.out.print("Enter number of customers: ");
-        int numCustomers = sc.nextInt();
-
+        // Validate numCustomers input
+        while (numCustomers <= 0) {
+            System.out.print("Enter number of customers: ");
+            try {
+                numCustomers = sc.nextInt();
+                if (numCustomers <= 0) {
+                    System.out.println("Number of customers must be greater than 0.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Please enter a valid number.");
+                sc.next(); // Clear the invalid input
+            }
+        }
 
         Configuration paraValues = new Configuration(totalTickets, releaseRate, retrievalRate, maxCapacity, numVendors, numCustomers);
 
