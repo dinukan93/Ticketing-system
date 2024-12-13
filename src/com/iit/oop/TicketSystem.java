@@ -19,13 +19,19 @@ public class TicketSystem {
         System.out.println("Real-Time Event Ticketing System!");
         while (true) {
             System.out.println("\n  Menu");
-            System.out.println("1. Start Ticketing System");
+            System.out.println("1. Adding Configuration");
             System.out.println("2. Save to a file");
             System.out.println("3. Load from a file");
             System.out.println("4. Exit");
 
             System.out.print("Enter your choice: ");
-            int choice = sc.nextInt();
+            int choice =0;
+            try{
+                choice = sc.nextInt();
+
+            } catch (InputMismatchException e) {
+                sc.next();
+            }
 
             switch (choice) {
                 case 1:
@@ -174,8 +180,8 @@ public class TicketSystem {
         }
 
         System.out.println("\nSummary of Real-Time Ticket Management System:");
-        System.out.println("Total Tickets Purchased: " + ticketPool.getTicketCount());
-        System.out.println("Remaining Tickets in Pool: " + (ticketPool.getTotalTickets()-ticketPool.getTicketCount()));
+        System.out.println("Total Tickets released: " + (ticketPool.getTicketCount()-1));
+        System.out.println("Remaining Tickets in Pool: " + ticketPool.getTicketQueueSize());
         System.out.println("System stopped.");
 
         return paraValues;
@@ -202,8 +208,49 @@ public class TicketSystem {
     public static Configuration loadFile() {
         try (FileReader reader = new FileReader("userInput.json")) {
             Gson gson = new Gson();
-            System.out.println("load from userInput.json successfully");
-            return gson.fromJson(reader, Configuration.class);
+            Configuration paraValues = gson.fromJson(reader, Configuration.class);
+            System.out.println("Configuration loaded successfully from 'userInput.json'.");
+
+            // Initialize the system with the loaded configuration
+            TicketPool ticketPool = new TicketPool(paraValues.getMaxTicketCapacity(), paraValues.getTotalTickets());
+            System.out.println("System configured successfully.");
+
+            // Start vendor threads
+            for (int vendorId = 1; vendorId <= paraValues.getNumVendors(); vendorId++) {
+                Vendor vendor = new Vendor(vendorId, paraValues.getTicketReleaseRate(), ticketPool, paraValues.getTotalTickets());
+                Thread vendorThread = new Thread(vendor, "Vendor ID- " + vendorId);
+                vendorThread.start();
+            }
+
+            // Start customer threads
+            for (int customerId = 1; customerId <= paraValues.getNumCustomers(); customerId++) {
+                Customer customer = new Customer(customerId, paraValues.getCustomerRetrievalRate(), ticketPool);
+                Thread customerThread = new Thread(customer, "Customer ID- " + customerId);
+                customerThread.start();
+            }
+
+            System.out.println("\nSystem is running. Enter '0' to stop.");
+            Scanner sc = new Scanner(System.in);
+            while (true) {
+                String input = sc.nextLine();
+                if (input.equals("0")) {
+                    isRunning = false; // Set flag to stop threads
+                    break;
+                }
+            }
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("\nSummary of Real-Time Ticket Management System:");
+            System.out.println("Total Tickets released: " + (ticketPool.getTicketCount() - 1));
+            System.out.println("Remaining Tickets in Pool: " + ticketPool.getTicketQueueSize());
+            System.out.println("System stopped.");
+
+            return paraValues;
         } catch (FileNotFoundException e) {
             System.err.println("Error: The file 'userInput.json' was not found.");
             return null;
@@ -212,6 +259,7 @@ public class TicketSystem {
             return null;
         }
     }
+
 
     public static void exitSystem() {
         isRunning = false;

@@ -7,12 +7,15 @@ public class TicketPool {
     private int maximumCapacity; // Maximum allowed tickets
     private int totalTickets;
     private int ticketCount;
+    private int purchasedTicketCount;
+
 
     public TicketPool(int maximumCapacity,int totalTickets) {
         this.maximumCapacity = maximumCapacity;
         this.ticketQueue = new LinkedList<>();
         this.totalTickets =totalTickets;
         this.ticketCount = 1;
+        this.purchasedTicketCount = 0;
     }
 
     public synchronized void addTicket() {
@@ -45,7 +48,6 @@ public class TicketPool {
         if (!TicketSystem.isRunning()) {
             return;
         }
-
         while (ticketQueue.isEmpty() && TicketSystem.isRunning() && ticketCount <= totalTickets) {
             try {
                 System.out.println("Waiting for vendor release tickets..");
@@ -54,13 +56,13 @@ public class TicketPool {
                 return;
             }
         }
-
         if (!TicketSystem.isRunning() || ticketCount > totalTickets) {
             return;
         }
 
         if (ticketQueue.size() > 0) {
             String purchasedTicket = ticketQueue.poll();
+            purchasedTicketCount++;
             notifyAll();
             System.out.println(purchasedTicket + " purchased by " + Thread.currentThread().getName() + " Remaining tickets: " + ticketQueue.size());
         }
@@ -76,6 +78,14 @@ public class TicketPool {
 
     public synchronized boolean isTicketAvailable() {
         return ticketQueue.size() > 0 || ticketCount <= totalTickets;
+    }
+
+    public int getPurchasedTicketCount() {
+        return purchasedTicketCount;
+    }
+
+    public int getTicketQueueSize() {
+        return ticketQueue.size();
     }
 }
 
